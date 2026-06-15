@@ -1,0 +1,8 @@
+//
+// Created by 36301 on 2026/6/14.
+//
+
+#ifndef C_BOARD_FRAMEWORK_TIM_TASK_H
+#define C_BOARD_FRAMEWORK_TIM_TASK_H
+
+#endif //C_BOARD_FRAMEWORK_TIM_TASK_H
