@@ -16,6 +16,8 @@
 
 typedef struct
 {
+    int8_t SPEED;
+    int8_t ANGEL;
     int8_t ONLINE_JUDGE_TIME;
     int16_t Angle_last; // 上一个角度值
     int16_t Angle_now;  // 现在的角度值

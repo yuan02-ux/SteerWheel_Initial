@@ -1,5 +1,5 @@
 #include "Chassis_Task.h"
-
+#include "math.h"
 #include "DBUS.h"
 #include "DJI_Motor.h"
 //DJI_Current_Ctrl
@@ -42,9 +42,13 @@ STEERING_ENGINE chassis;
 extern DBUS_Typedef DBUS;
 void Chassis_pingyi_speed(DJI_MOTOR_DATA_Typedef *motor)//M3508
 {//左侧负责平移，x轴为通道2，y轴为通道3
-
+    chassis.Vx =DBUS.Remote.CH2;
+    chassis.Vy =DBUS.Remote.CH3;
+    M3508.SPEED =hypot(chassis.Vx,chassis.Vy );
 }
 void Chassis_pingyi_angel()//GM6020
 {
-
+    chassis.Vx =DBUS.Remote.CH2;
+    chassis.Vy =DBUS.Remote.CH3;
+    GM6020.ANGEL= atan2(chassis.Vy, chassis.Vx);
 }

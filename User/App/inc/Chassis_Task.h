@@ -16,4 +16,6 @@ typedef struct
     int16_t k;  // 现在的速度值
 
 }STEERING_ENGINE;
+extern DJI_MOTOR_DATA_Typedef M3508;
+extern DJI_MOTOR_DATA_Typedef GM6020;
 #endif

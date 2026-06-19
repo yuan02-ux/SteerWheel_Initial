@@ -19,7 +19,9 @@ set(CPU_FLAGS -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard)
 add_executable(${CMAKE_PROJECT_NAME}
         User/App/TIM_task.c
         User/App/inc/TIM_task.h
-        User/App/TIM_task.c)
+        User/App/TIM_task.c
+        User/Algorithm/PID.c
+        User/Algorithm/inc/PID.h)
 
 add_subdirectory(cmake/stm32cubemx)
 add_subdirectory(Middlewares/CMSIS)
