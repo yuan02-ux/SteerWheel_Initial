@@ -28,7 +28,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
                 0,
                 0);
         DM_Motor_Send(&hcan1, 0x200, 0, 0, 0, 0);
-        DM_Motor_Send(&hcan2, 0x1FF, 0, 0,0, 0);
+        DM_Motor_Send(&hcan2, 0x1FE, 0, 0,0, 0);//电机是0X1FE
     }
 
 }
