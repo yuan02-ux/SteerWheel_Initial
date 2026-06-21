@@ -10,6 +10,7 @@
 DBUS->Remote.CH1  = (int16_t)frame->channel1 - 1024;
 DBUS->Remote.CH2  = (int16_t)frame->channel2 - 1024;
 DBUS->Remote.CH3  = (int16_t)frame->channel3 - 1024;*/
+//怀疑是把任务放在了定时器中断的原因
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 
