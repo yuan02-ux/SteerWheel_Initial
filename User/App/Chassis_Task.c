@@ -40,15 +40,17 @@ DJI_MOTOR_DATA_Typedef M3508;
 DJI_MOTOR_DATA_Typedef GM6020;
 STEERING_ENGINE chassis;
 extern DBUS_Typedef DBUS;
-void Chassis_pingyi_speed(DJI_MOTOR_DATA_Typedef *motor)//M3508
+float Chassis_pingyi_speed(DJI_MOTOR_DATA_Typedef *M3508_demo)//M3508
 {//左侧负责平移，x轴为通道2，y轴为通道3
     chassis.Vx =DBUS.Remote.CH2;
     chassis.Vy =DBUS.Remote.CH3;
-    M3508.SPEED =hypot(chassis.Vx,chassis.Vy );
+    M3508_demo->SPEED =hypot(chassis.Vx,chassis.Vy );
+    return M3508_demo->ANGEL;
 }
-void Chassis_pingyi_angel()//GM6020
+float Chassis_pingyi_angel(DJI_MOTOR_DATA_Typedef *GM6020_demo)//GM6020
 {
     chassis.Vx =DBUS.Remote.CH2;
     chassis.Vy =DBUS.Remote.CH3;
-    GM6020.ANGEL= atan2(chassis.Vy, chassis.Vx);
+    GM6020_demo->ANGEL= atan2(chassis.Vy, chassis.Vx);
+    return  GM6020_demo->ANGEL;
 }

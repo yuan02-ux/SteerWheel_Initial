@@ -13,6 +13,7 @@
 #include "controller.h"
 #include "MY_define.h"
 #include "can_bsp.h"
+#include "PID.h"
 
 typedef struct
 {
@@ -62,6 +63,8 @@ typedef struct
     PID_t PID_S;
 	 DM_MOTOR_PV_Typdef PV;
 	motor_ctrl_t motor_ctrl;
+    pid PID_a;
+    pid PID_s;
 }DJI_MOTOR_Typedef;
 
 void MOTOR_CAN_RX_3508RM(DJI_MOTOR_DATA_Typedef* DATA , uint8_t* can_data);

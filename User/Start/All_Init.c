@@ -58,16 +58,17 @@ void Everying_Init(void)
     //DWT初始化
     DWT_Init(168);
 
+    //定时器初始化 - 必须在CAN初始化之前，否则MCP2515卡死会导致TIM9无法启动
+	HAL_TIM_Base_Start_IT(&htim3);
+	HAL_TIM_Base_Start_IT(&htim7);
+	HAL_TIM_Base_Start_IT(&htim9);
+
     //CAN初始化
 	CAN_Filter_Init();
 	
 	//MCP2515初始化
 	flag2 = CANSPI_Initialize(&hspi2);
 
-    //定时器初始化
-	HAL_TIM_Base_Start_IT(&htim3);
-	HAL_TIM_Base_Start_IT(&htim7);
-	HAL_TIM_Base_Start_IT(&htim9);
     //蜂鸣器PWM初始化
     HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_3);
 

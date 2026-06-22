@@ -17,11 +17,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE)
 set(CPU_FLAGS -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard)
 
 add_executable(${CMAKE_PROJECT_NAME}
-        User/App/TIM_task.c
-        User/App/inc/TIM_task.h
-        User/App/TIM_task.c
-        User/Algorithm/PID.c
-        User/Algorithm/inc/PID.h)
+        User/Algorithm/PID.c)
 
 add_subdirectory(cmake/stm32cubemx)
 add_subdirectory(Middlewares/CMSIS)
@@ -29,7 +25,7 @@ add_subdirectory(Middlewares/SEGGER_RTT)
 add_subdirectory(User)
 
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
-        STM32G473xx USE_HAL_DRIVER ARM_MATH_CM4 __FPU_PRESENT=1U
+        STM32F407xx USE_HAL_DRIVER ARM_MATH_CM4 __FPU_PRESENT=1U
         HAL_ASSERT_DISABLE=1 ARM_MATH_MATRIX_CHECK=0 ARM_MATH_ROUNDING=0
         User_Release
         $<$<CONFIG:Debug>:DEBUG_MODE> $<$<CONFIG:Release>:RELEASE_MODE>

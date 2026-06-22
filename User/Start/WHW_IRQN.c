@@ -9,7 +9,6 @@ void StartRobotUITask(void const * argument)
 
     for (;;)
     {
-
     	currentTimeRobotUI += 40;
     	osDelayUntil(currentTimeRobotUI);
 
@@ -24,7 +23,7 @@ void StartMoveTask(void const * argument)
 
     for (;;)
     {
-    DJI_Current_Ctrl(&hcan1,0x200,0,0,400,0);
+    	//DJI_Current_Ctrl(&hcan2, 0x1FF, 2000, 2000, 2000, 0);
     	vTaskDelay (1);
     }
 }

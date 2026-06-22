@@ -64,7 +64,7 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+volatile uint32_t _init_step = 0;  /* 调试用：记录初始化到哪一步 */
 /* USER CODE END 0 */
 
 /**
@@ -81,6 +81,7 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  _init_step = 1;
   HAL_Init();
 
   /* USER CODE BEGIN Init */
@@ -88,34 +89,46 @@ int main(void)
   /* USER CODE END Init */
 
   /* Configure the system clock */
+  _init_step = 2;
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+  /* 调试模式：保持所有定时器在 CPU halt 时继续运行，确保中断能触发 */
+  _init_step = 3;
+  DBGMCU->APB1FZ = 0x00001800;  /* 仅冻结 IWDG(bit12)+WWDG(bit11)，TIM2~TIM7 保持运行 */
+  DBGMCU->APB2FZ = 0x00000000;  /* TIM1,TIM8~TIM11 全部保持运行 */
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_DMA_Init();
-  MX_CAN1_Init();
-  MX_CAN2_Init();
-  MX_SPI1_Init();
-  MX_USART1_UART_Init();
-  MX_USART6_UART_Init();
-  MX_CRC_Init();
-  MX_TIM10_Init();
-  MX_USART3_UART_Init();
-  MX_TIM4_Init();
-  MX_ADC1_Init();
-  MX_ADC3_Init();
-  MX_TIM7_Init();
-  MX_SPI2_Init();
-  MX_USART2_UART_Init();
-  MX_TIM1_Init();
-  MX_TIM3_Init();
-  MX_TIM9_Init();
+  _init_step = 10; MX_GPIO_Init();
+  _init_step = 11; MX_DMA_Init();
+  _init_step = 12; MX_CAN1_Init();
+  _init_step = 13; MX_CAN2_Init();
+  _init_step = 14; MX_SPI1_Init();
+  _init_step = 15; MX_USART1_UART_Init();
+  _init_step = 16; MX_USART6_UART_Init();
+  _init_step = 17; MX_CRC_Init();
+  _init_step = 18; MX_TIM10_Init();
+  _init_step = 19; MX_USART3_UART_Init();
+  _init_step = 20; MX_TIM4_Init();
+  _init_step = 21; MX_ADC1_Init();
+  _init_step = 22; MX_ADC3_Init();
+  _init_step = 23; MX_TIM7_Init();
+  _init_step = 24; MX_SPI2_Init();
+  _init_step = 25; MX_USART2_UART_Init();
+  _init_step = 26; MX_TIM1_Init();
+  _init_step = 27; MX_TIM3_Init();
+  _init_step = 28; MX_TIM9_Init();
   /* USER CODE BEGIN 2 */
+  /* 在调度器启动前开启 TIM3/TIM7/TIM9，避免被高优先级阻塞任务卡住导致定时器不启动 */
+  HAL_TIM_Base_Start_IT(&htim3);
+  HAL_TIM_Base_Start_IT(&htim7);
+  HAL_TIM_Base_Start_IT(&htim9);
 
+  /* 直接操作寄存器兜底：确保 TIM9 时钟+计数器+中断一定开启 */
+  __HAL_RCC_TIM9_CLK_ENABLE();  /* 强制开时钟 */
+  TIM9->CR1  |= TIM_CR1_CEN;    /* 使能计数器 */
+  TIM9->DIER |= TIM_DIER_UIE;   /* 使能更新中断 */
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -154,15 +167,16 @@ void SystemClock_Config(void)
 
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
+  * 使用内部 HSI（16MHz）替代 HSE，避免外部晶振起振失败
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 6;
-  RCC_OscInitStruct.PLL.PLLN = 168;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 7;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+  RCC_OscInitStruct.PLL.PLLM = 8;    /* HSI=16MHz / 8 = 2MHz VCO输入 */
+  RCC_OscInitStruct.PLL.PLLN = 168;  /* 2MHz * 168 = 336MHz VCO输出 */
+  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;  /* 336/2 = 168MHz SYSCLK */
+  RCC_OscInitStruct.PLL.PLLQ = 7;    /* 336/7 = 48MHz (USB) */
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -195,13 +209,16 @@ void SystemClock_Config(void)
   * @param  htim : TIM handle
   * @retval None
   */
-/* USER CODE BEGIN Callback 0 */
 
-/* USER CODE END Callback 0 */
 
-/* USER CODE BEGIN Callback 1 */
+  /* USER CODE BEGIN Callback 0 */
 
-/* USER CODE END Callback 1 */
+  /* USER CODE END Callback 0 */
+
+  /* USER CODE BEGIN Callback 1 */
+
+  /* USER CODE END Callback 1 */
+
 
 /**
   * @brief  This function is executed in case of error occurrence.
@@ -211,7 +228,7 @@ void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
+  /* 调试期间不关中断，检查 _init_step 变量确定失败位置 */
   while (1)
   {
   }
