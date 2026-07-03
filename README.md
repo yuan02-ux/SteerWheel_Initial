@@ -74,7 +74,7 @@ void Chassis_jiesuan(DJI_MOTOR_DATA_Typedef *M3508_demo, DJI_MOTOR_DATA_Typedef 
   - GM6020 舵向电机：采用“外环角度 + 内环速度”的双环 PID 进行位置跟踪，优先整定内环速度环 Kp，确保响应无震荡后，再引入外环角度 Kp。
   - M3508 驱动电机：采用速度闭环控制，Kp调的不好的时候，底盘容易走歪或走直线跑偏。
 
-🚀快速上手编译
+快速上手编译
 
 1.  使用 CLion 打开本项目。
 2.  检查开发环境中的编译器路径（通常为 arm-none-eabi-gcc）。
